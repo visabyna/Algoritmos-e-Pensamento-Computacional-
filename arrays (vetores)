@@ -5,7 +5,7 @@ int main() {
     int quantidade;      // Quantidade de alunos
     float soma = 0.0;    // Soma das notas
     float media;         // Média das notas
-    int i;               // Contador do laço
+    int i;               
 
     // Solicita ao usuário a quantidade de alunos
     printf("Digite o número de alunos (máximo 50): ");
