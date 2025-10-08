@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+int main() {
+    float notas[50];     // Vetor para armazenar até 50 notas
+    int quantidade;      // Quantidade de alunos
+    float soma = 0.0;    // Soma das notas
+    float media;         // Média das notas
+    int i;               // Contador do laço
+
+    // Solicita ao usuário a quantidade de alunos
+    printf("Digite o número de alunos (máximo 50): ");
+    scanf("%d", &quantidade);
+
+    // Verifica se o número é válido
+    if (quantidade < 1 || quantidade > 50) {
+        printf("Quantidade inválida.\n");
+        return 1;
+    }
+
+    // Lê as notas e acumula a soma
+    for (i = 0; i < quantidade; i++) {
+        printf("Digite a nota do aluno %d: ", i + 1);
+        scanf("%f", &notas[i]);
+        soma += notas[i];
+    }
+
+    // Calcula a média
+    media = soma / quantidade;
+
+    // Exibe o resultado
+    printf("A média geral das notas é: %.2f\n", media);
+
+    return 0;
+}
