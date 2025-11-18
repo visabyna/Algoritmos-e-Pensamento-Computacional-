@@ -1,0 +1,111 @@
+# README – Projeto de Ordenação
+
+Descrição do problema
+
+O objetivo deste trabalho é comparar o desempenho de três algoritmos de ordenação aplicados sobre vetores de tamanhos variados.  
+Os métodos escolhidos foram:
+
+- **Bubble Sort**  
+- **Insertion Sort**  
+- **Quick Sort**
+
+Esses três foram escolhidos porque representam três níveis diferentes de eficiência:
+
+- Bubble Sort → muito simples, porém ineficiente (O(n²))  
+- Insertion Sort → ainda O(n²), mas mais eficiente que o Bubble  
+- Quick Sort → O(n log n) em média, sendo uma das abordagens mais rápidas
+
+O estudo busca analisar:  
+- tempo de execução  
+- quantidade de passos (comparações/movimentações)  
+- escalabilidade conforme o tamanho do vetor aumenta
+
+---
+
+Como compilar e rodar
+
+Para compilar:
+
+gcc -O1 -std=c11 src/*.c -o ordena
+
+yaml
+Copiar código
+
+Para executar:
+
+./ordena
+
+nginx
+Copiar código
+
+Para depurar no GDB:
+
+gcc -g -std=c11 src/*.c -o ordena
+gdb ./ordena
+
+yaml
+Copiar código
+
+---
+
+Política de contagem de passos
+
+A contagem de passos considera:
+
+- Comparações  
+- Trocas  
+- Movimentações de elementos  
+- Chamadas recursivas (no Quick Sort)
+
+Cada operação relevante soma **1 passo**.  
+Essa política permite comparar os algoritmos independentemente do hardware utilizado.
+
+---
+
+Método de medição de tempo
+
+O tempo de execução é medido usando a função `clock()` da biblioteca `<time.h>`.
+
+Para cada algoritmo e tamanho de vetor:
+
+1. O teste é executado **5 vezes**  
+2. Calcula-se a **média do tempo**  
+3. Calcula-se a **média dos passos**  
+4. Os resultados são armazenados em um arquivo CSV
+
+---
+
+Tabelas e CSV de resultados
+
+O programa gera automaticamente um arquivo:
+
+resultados.csv
+
+yaml
+Copiar código
+
+Formato esperado:
+
+| Algoritmo | Tamanho | Média de Tempo (s) | Média de Passos |
+|-----------|---------|---------------------|------------------|
+
+Esse arquivo pode ser aberto para análise no Excel, Google Sheets ou similar.
+
+---
+
+Discussão crítica
+
+### Computabilidade × Escalabilidade
+- **Bubble Sort** cresce rapidamente em custo computacional e não escala bem.  
+- **Insertion Sort** tem o mesmo O(n²), mas se comporta melhor em vetores parcialmente organizados.  
+- **Quick Sort** apresenta O(n log n) na maior parte das situações, escalando muito melhor.
+
+### Limites observados
+- Bubble se torna lento rapidamente, principalmente acima de vetores médios/grandes.  
+- Insertion apresenta desempenho ok em vetores menores, mas cai em vetores grandes.  
+- Quick Sort mantém boa performance mesmo em tamanhos altos.
+
+### Conclusão sobre o melhor método
+**Quick Sort foi o algoritmo mais eficiente** considerando tempo e passos.  
+Ele lidou com vetores grandes de forma superior, mostrando melhor escalabilidade e custo computacional.
+
