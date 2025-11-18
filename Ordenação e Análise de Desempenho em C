@@ -1,0 +1,186 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+// Struct para armazenar métricas
+typedef struct {
+    long passos;
+    double tempo_ms;
+} Stats;
+
+// Função auxiliar para trocar valores
+void troca(int *a, int *b, Stats *s) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+    s->passos++; // conta a troca como passo
+}
+
+// -----------------------------------------
+// BUBBLE SORT
+// -----------------------------------------
+void bubbleSort(int v[], int n, Stats *s) {
+    s->passos = 0;
+    clock_t ini = clock();
+
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            s->passos++; // comparação
+            if (v[j] > v[j+1]) {
+                troca(&v[j], &v[j+1], s);
+            }
+        }
+    }
+
+    clock_t fim = clock();
+    s->tempo_ms = (double)(fim - ini) / (CLOCKS_PER_SEC / 1000);
+}
+
+// -----------------------------------------
+// INSERTION SORT
+// -----------------------------------------
+void insertionSort(int v[], int n, Stats *s) {
+    s->passos = 0;
+    clock_t ini = clock();
+
+    for (int i = 1; i < n; i++) {
+        int chave = v[i];
+        int j = i - 1;
+
+        s->passos++; // leitura da chave
+
+        while (j >= 0 && v[j] > chave) {
+            s->passos++; // comparação
+            v[j+1] = v[j];
+            j--;
+        }
+        v[j+1] = chave;
+    }
+
+    clock_t fim = clock();
+    s->tempo_ms = (double)(fim - ini) / (CLOCKS_PER_SEC / 1000);
+}
+
+// -----------------------------------------
+// QUICK SORT
+// -----------------------------------------
+int particiona(int v[], int ini, int fim, Stats *s) {
+    int pivo = v[fim];
+    int i = ini - 1;
+
+    for (int j = ini; j < fim; j++) {
+        s->passos++; // comparação
+        if (v[j] < pivo) {
+            i++;
+            troca(&v[i], &v[j], s);
+        }
+    }
+
+    troca(&v[i+1], &v[fim], s);
+    return i + 1;
+}
+
+void quickSort(int v[], int ini, int fim, Stats *s) {
+    if (ini < fim) {
+        int pi = particiona(v, ini, fim, s);
+        quickSort(v, ini, pi - 1, s);
+        quickSort(v, pi + 1, fim, s);
+    }
+}
+
+// -----------------------------------------
+// Função para copiar vetor
+// -----------------------------------------
+void copiaVetor(int *orig, int *dest, int n) {
+    for (int i = 0; i < n; i++) dest[i] = orig[i];
+}
+
+// -----------------------------------------
+// Gera vetor aleatório
+// -----------------------------------------
+void geraAleatorio(int *v, int n) {
+    for (int i = 0; i < n; i++)
+        v[i] = rand() % 10000;
+}
+
+// Imprime CSV de uma execução
+
+void imprimeCSV(const char *metodo, int N, const char *caso, Stats s) {
+    printf("%s,%d,%s,%ld,%.3f\n", metodo, N, caso, s.passos, s.tempo_ms);
+}
+
+// PROGRAMA PRINCIPAL
+
+int main() {
+    srand(time(NULL));
+
+    // RGM especificado no trabalho
+    char rgm_str[] = "45890404";
+    int rgm_len = strlen(rgm_str);
+    int rgm[20];
+
+    // Converter string → vetor
+    for (int i = 0; i < rgm_len; i++)
+        rgm[i] = rgm_str[i] - '0';
+
+    printf("Saida CSV:\n");
+    printf("metodo,N,caso,passos,tempo_ms\n");
+
+    Stats s;
+
+    // Vetores auxiliares
+    int temp[20000];
+
+    // -----------------------------------------
+    // ORDENAR O RGM COM CADA MÉTODO
+    // -----------------------------------------
+    copiaVetor(rgm, temp, rgm_len);
+    bubbleSort(temp, rgm_len, &s);
+    imprimeCSV("bubble", rgm_len, "rgm", s);
+
+    copiaVetor(rgm, temp, rgm_len);
+    insertionSort(temp, rgm_len, &s);
+    imprimeCSV("insertion", rgm_len, "rgm", s);
+
+    copiaVetor(rgm, temp, rgm_len);
+    s.passos = 0;
+    clock_t ini = clock();
+    quickSort(temp, 0, rgm_len-1, &s);
+    clock_t fim = clock();
+    s.tempo_ms = (double)(fim - ini) / (CLOCKS_PER_SEC / 1000);
+    imprimeCSV("quick", rgm_len, "rgm", s);
+
+    // -----------------------------------------
+    // BENCHMARK COM 3 TAMANHOS
+    // -----------------------------------------
+    int tamanhos[] = {100, 1000, 10000};
+
+    for (int t = 0; t < 3; t++) {
+        int N = tamanhos[t];
+        int base[20000];
+
+        geraAleatorio(base, N);
+
+        // BUBBLE
+        copiaVetor(base, temp, N);
+        bubbleSort(temp, N, &s);
+        imprimeCSV("bubble", N, "aleatorio", s);
+
+        // INSERTION
+        copiaVetor(base, temp, N);
+        insertionSort(temp, N, &s);
+        imprimeCSV("insertion", N, "aleatorio", s);
+
+        // QUICK
+        copiaVetor(base, temp, N);
+        s.passos = 0;
+        clock_t ini2 = clock();
+        quickSort(temp, 0, N-1, &s);
+        clock_t fim2 = clock();
+        s.tempo_ms = (double)(fim2 - ini2) / (CLOCKS_PER_SEC / 1000);
+        imprimeCSV("quick", N, "aleatorio", s);
+    }
+
+    return 0;
+}
